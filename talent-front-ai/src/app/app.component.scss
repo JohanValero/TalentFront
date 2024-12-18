@@ -1,0 +1,110 @@
+/* Estilo general del contenedor */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Estilo del encabezado */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  color: white;
+  padding: 15px 20px;
+  height: 50px; /* Altura fija */
+  text-align: center;
+  position: relative; /* Para centrar el texto */
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Añade sombra */
+}
+
+.header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); /* Centra el texto */
+  font-size: 1.5rem;
+  margin: 0;
+  color: black;
+}
+
+/* Estilo del ícono personalizado */
+.header-icon {
+  width: 60px; /* Ajusta el tamaño del ícono */
+  height: 60px;
+  object-fit: contain; /* Asegura que la imagen no se deforme */
+  vertical-align: middle;
+}
+
+/* Contenedor del sidebar y el contenido principal */
+.content-wrapper {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: white;
+  width: 90px;
+  padding: 5px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los elementos horizontalmente */
+  justify-content: center; /* Centra los elementos verticalmente */
+  height: 100%; /* Asegura que el sidebar ocupe toda la altura disponible */
+}
+
+.sidebar button {
+  margin-bottom: 10px; /* Separación entre los botones */
+  width: 40%;
+}
+
+.sidebar p {
+  margin-top: 0;
+  font-size: 14px;
+  text-align: center; /* Centra el texto de los párrafos */
+}
+
+/* Ajuste si quieres que todo se vea centrado y alineado correctamente */
+.sidebar button,
+.sidebar p {
+  text-align: center; /* Centra el contenido de los botones */
+}
+
+/* Contenido principal */
+.main-content {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: white;
+  margin-left: 5px; /* Ancho del sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+/* Estilo responsivo para pantallas pequeñas */
+@media (max-width: 768px) {
+  .header {
+    font-size: 1.2rem;
+    height: 60px;
+  }
+
+  .header-icon {
+    width: 30px; /* Reduce el tamaño del ícono en pantallas pequeñas */
+    height: 30px;
+  }
+
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
