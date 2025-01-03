@@ -15,4 +15,8 @@ export class CandidateService {
         const encodedTerm = encodeURIComponent(term);
         return this.http.get<SearchResponse>(`${this.baseUrl}/search_candidates/${encodedTerm}`);
     }
+
+    justifyCandidate(candidateData: any): Observable<{ msg: string }> {
+        return this.http.post<{ msg: string }>(`${this.baseUrl}/justify_candidate`, candidateData);
+    }
 }

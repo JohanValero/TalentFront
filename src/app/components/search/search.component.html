@@ -31,6 +31,14 @@
                     </mat-card-header>
                     <mat-card-content>
                         <p class="profile-text">{{ candidate.json_data.perfil }}</p>
+                        <div class="justification-section">
+                            <mat-divider></mat-divider>
+                            <p *ngIf="candidateJustifications[candidate.json_data._id]" 
+                               class="justification-text">
+                                {{candidateJustifications[candidate.json_data._id]}}
+                            </p>
+                            <mat-progress-spinner *ngIf="!candidateJustifications[candidate.json_data._id]" diameter="20" mode="indeterminate"></mat-progress-spinner>
+                        </div>
                     </mat-card-content>
                 </mat-card>
             </div>

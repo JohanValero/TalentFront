@@ -85,3 +85,23 @@
     padding: 2rem;
     color: rgba(0, 0, 0, 0.6);
 }
+
+.justification-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+
+    h4 {
+        margin-bottom: 0.5rem;
+        color: rgba(0, 0, 0, 0.87);
+    }
+
+    .justification-text {
+        color: rgba(0, 0, 0, 0.7);
+        font-style: italic;
+        margin: 0.5rem 0;
+    }
+}
+
+mat-progress-spinner {
+    margin: 1rem auto;
+}
