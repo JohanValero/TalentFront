@@ -75,7 +75,6 @@ export class SearchComponent {
         matched_skills: candidate.matched_skills
       }).subscribe({
         next: (response) => {
-          console.log("Response:", response)
           this.candidateJustifications[candidate.json_data._id] = response.msg;
         },
         error: (error) => {
