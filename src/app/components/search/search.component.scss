@@ -1,0 +1,87 @@
+.search-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease-in-out;
+
+    &:not(.searching) {
+        justify-content: center;
+        align-items: center;
+    }
+
+    &.searching {
+        .search-box {
+            padding: 1rem;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    }
+}
+
+.search-box {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+.results-container {
+    flex: 1;
+    overflow: hidden;
+    padding: 0 1rem;
+}
+
+.results-scroll {
+    height: 100%;
+    overflow-y: auto;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.candidates-list {
+    padding: 1rem 0;
+}
+
+.candidate-card {
+    margin-bottom: 1rem;
+    position: relative;
+
+    .view-cv-button {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+    }
+
+    mat-card-content {
+        padding: 1rem 0;
+    }
+
+    .profile-text {
+        margin-bottom: 1rem;
+        color: rgba(0, 0, 0, 0.7);
+    }
+
+    mat-chip-listbox {
+        margin-top: 0.5rem;
+    }
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(0, 0, 0, 0.6);
+}
