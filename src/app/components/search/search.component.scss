@@ -105,3 +105,23 @@
 mat-progress-spinner {
     margin: 1rem auto;
 }
+
+.color-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.red-circle {
+  background-color: red;
+}
+
+.yellow-circle {
+  background-color: yellow;
+}
+
+.green-circle {
+  background-color: green;
+}

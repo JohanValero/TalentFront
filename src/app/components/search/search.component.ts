@@ -35,6 +35,9 @@ import { MatDividerModule } from '@angular/material/divider';
 export class SearchComponent {
   searchTerm: string = '';
   isSearching: boolean = false;
+  watchDetail: boolean = false;
+  detailJustification: string = '';
+  actualDetail: { json_data?: { nombre: any; }; matched_skills?: any; } = {};
   result_of_candidates: SearchResponse | null = null;
   candidateJustifications: { [key: string]: string } = {};
 
@@ -45,13 +48,12 @@ export class SearchComponent {
 
     this.isSearching = true;
     this.result_of_candidates = null;
-
+    this.watchDetail = false;
     this.candidateService.searchCandidates(this.searchTerm)
       .subscribe({
         next: (results) => {
           this.result_of_candidates = results;
           this.isSearching = false;
-          this.getCandidateJustifications()
         },
         error: (error) => {
           console.error('Error en la búsqueda:', error);
@@ -60,14 +62,19 @@ export class SearchComponent {
       });
   }
 
-  onViewCV(candidateId: string): void {
-    console.log('Ver CV del candidato:', candidateId);
+  onViewCV(candidateObj: {json_data?: { nombre: any; }; matched_skills?: any; }): void {
+    this.detailJustification = ''
+    this.getCandidateJustifications(candidateObj)
+    this.actualDetail = candidateObj;
+    this.watchDetail = true;
+
   }
 
-  private getCandidateJustifications(): void {
-    if (!this.result_of_candidates) return;
+  onBack(){
+    this.watchDetail = false;
+  }
 
-    this.result_of_candidates.result.forEach(candidate => {
+  private getCandidateJustifications(candidate: { json_data?: { nombre: any; }; matched_skills?: any; }): void {
       this.candidateService.justifyCandidate({
         user_promt: this.searchTerm,
         candidate: candidate.json_data,
@@ -75,13 +82,27 @@ export class SearchComponent {
         matched_skills: candidate.matched_skills
       }).subscribe({
         next: (response) => {
-          this.candidateJustifications[candidate.json_data._id] = response.msg;
+          this.detailJustification = response.msg;
         },
         error: (error) => {
-          console.error(`Error obteniendo justificación para ${candidate.json_data.nombre}:`, error);
-          this.candidateJustifications[candidate.json_data._id] = 'No se pudo obtener la justificación.';
+          console.error(`Error obteniendo justificación para ${candidate.json_data?.nombre}:`, error);
+          this.detailJustification = 'No se pudo obtener la justificación.';
         }
       });
-    });
   }
+
+  getColorClass(score: number): string {
+    if (score <= 0.40) {
+      return 'red-circle';
+    } else if (score > 0.40 && score <= 0.70) {
+      return 'yellow-circle';
+    } else {
+      return 'green-circle';
+    }
+  }
+
+  public get isJustificationEmpty() : boolean {
+    return this.detailJustification.trim().length === 0
+  }
+
 }
