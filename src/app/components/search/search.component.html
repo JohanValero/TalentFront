@@ -49,21 +49,93 @@
 
             <!-- VER DETALLES -->
             <div *ngIf="watchDetail" class="justification-section">
-              <p *ngIf="actualDetail"
-                  class="justification-text">
-                  NOMBRE: {{actualDetail.json_data?.nombre}}
-              </p>
-              <mat-divider></mat-divider>
+              <strong>TALENTMATCH AI DICE:</strong>
                 <p *ngIf="detailJustification"
                     class="justification-text">
                     {{detailJustification}}
                 </p>
               <mat-progress-spinner *ngIf="isJustificationEmpty" diameter="20" mode="indeterminate"></mat-progress-spinner>
-              <button mat-icon-button color="primary"
-                      class="view-cv-button"
-                      (click)="onBack()">
-                  <mat-icon>arrow_back</mat-icon>
-              </button>
+              <span class="fixed-buttons">
+                <button mat-icon-button color="primary"
+                class="back-button"
+                (click)="onBack()">
+                <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <button mat-icon-button color="primary"
+                class="back-button"
+                (click)="onBack()">
+                <mat-icon>picture_as_pdf</mat-icon>
+                </button>
+              </span>
+              <mat-divider></mat-divider>
+              <!-- Nombre y Perfil -->
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title><strong>{{ actualDetail.json_data.nombre | uppercase }}</strong></mat-card-title>
+                  <mat-card-subtitle>{{ actualDetail.json_data.ubicacion }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p>{{ actualDetail.json_data.perfil }}</p>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Contacto -->
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>CONTACTO</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <p><strong>Email:</strong> {{ actualDetail.json_data.email }}</p>
+                  <p><strong>Teléfono:</strong> {{ actualDetail.json_data.telefono }}</p>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Educación -->
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>EDUCACIÓN</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-list>
+                    <mat-list-item *ngFor="let edu of actualDetail.json_data.educacion">
+                      <div mat-line><strong>{{ edu.titulo }}</strong></div>
+                      <div mat-line>{{ edu.universidad }}</div>
+                    </mat-list-item>
+                  </mat-list>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Experiencia -->
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>EXPERIENCIA</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-list>
+                    <mat-list-item *ngFor="let exp of actualDetail.json_data.experiencia">
+                      <div mat-line><strong>{{ exp.cargo }}</strong> - {{ exp.empresa }}</div>
+                      <div mat-line>{{ exp.descripcion }}</div>
+                    </mat-list-item>
+                  </mat-list>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Habilidades -->
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>HABILIDADES</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <ul>
+                    <li *ngFor="let skill of actualDetail.json_data.skills">
+                      <span [ngClass]="{'soft-skill': skill.skill_type === 'blando', 'hard-skill': skill.skill_type === 'duro'}"
+                            class="skill-circle"></span>
+                      {{ skill.skill_name }}
+                    </li>
+                  </ul>
+                </mat-card-content>
+              </mat-card>
             </div>
 
         </div>

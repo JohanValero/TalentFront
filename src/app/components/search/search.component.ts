@@ -9,9 +9,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { CandidateService } from '../../services/candidate.service';
-import { SearchResponse } from '../../interfaces/candidate.interface';
+import { CandidateResult, SearchResponse } from '../../interfaces/candidate.interface';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-search',
@@ -26,6 +27,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatChipsModule,
     MatCardModule,
     MatDividerModule,
+    MatListModule,
     HttpClientModule
   ],
   providers: [CandidateService],
@@ -37,7 +39,21 @@ export class SearchComponent {
   isSearching: boolean = false;
   watchDetail: boolean = false;
   detailJustification: string = '';
-  actualDetail: { json_data?: { nombre: any; }; matched_skills?: any; } = {};
+  actualDetail: CandidateResult = {json_data:{
+    _id: '',
+    conocimientos: [],
+    educacion: [],
+    email: '',
+    experiencia: [],
+    idiomas: [],
+    nombre: '',
+    perfil: '',
+    skills: [],
+    telefono: '',
+    ubicacion: ''
+  },
+  matched_skills: []
+  };
   result_of_candidates: SearchResponse | null = null;
   candidateJustifications: { [key: string]: string } = {};
 
@@ -62,7 +78,7 @@ export class SearchComponent {
       });
   }
 
-  onViewCV(candidateObj: {json_data?: { nombre: any; }; matched_skills?: any; }): void {
+  onViewCV(candidateObj: CandidateResult): void {
     this.detailJustification = ''
     this.getCandidateJustifications(candidateObj)
     this.actualDetail = candidateObj;
@@ -74,7 +90,7 @@ export class SearchComponent {
     this.watchDetail = false;
   }
 
-  private getCandidateJustifications(candidate: { json_data?: { nombre: any; }; matched_skills?: any; }): void {
+  private getCandidateJustifications(candidate: CandidateResult): void {
       this.candidateService.justifyCandidate({
         user_promt: this.searchTerm,
         candidate: candidate.json_data,
