@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,9 +10,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { CandidateService } from '../../services/candidate.service';
 import { CandidateResult, SearchResponse } from '../../interfaces/candidate.interface';
-import { HttpClientModule } from '@angular/common/http';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ChatComponent } from "../chat-modal/chat.component";
+import { PdfService } from '../../services/pdf.service';
 
 @Component({
   selector: 'app-search',
@@ -28,17 +30,20 @@ import { MatListModule } from '@angular/material/list';
     MatCardModule,
     MatDividerModule,
     MatListModule,
-    HttpClientModule
-  ],
+    MatTooltipModule,
+    ChatComponent
+],
   providers: [CandidateService],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss'
 })
 export class SearchComponent {
+  @ViewChild(ChatComponent) chatModal!: ChatComponent;
   searchTerm: string = '';
   isSearching: boolean = false;
   watchDetail: boolean = false;
   detailJustification: string = '';
+  errorMessage?: string = '';
   actualDetail: CandidateResult = {json_data:{
     _id: '',
     conocimientos: [],
@@ -55,9 +60,8 @@ export class SearchComponent {
   matched_skills: []
   };
   result_of_candidates: SearchResponse | null = null;
-  candidateJustifications: { [key: string]: string } = {};
 
-  constructor(private candidateService: CandidateService) { }
+  constructor(private candidateService: CandidateService, private pdfService: PdfService) { }
 
   onSearch(): void {
     if (!this.searchTerm?.trim()) return;
@@ -68,6 +72,13 @@ export class SearchComponent {
     this.candidateService.searchCandidates(this.searchTerm)
       .subscribe({
         next: (results) => {
+          if(results.status === 500){
+            this.errorMessage = `- ${results.msg}`;
+            this.result_of_candidates = {result: []}
+            this.isSearching = false;
+            return
+          }
+          this.errorMessage = '';
           this.result_of_candidates = results;
           this.isSearching = false;
         },
@@ -115,6 +126,14 @@ export class SearchComponent {
     } else {
       return 'green-circle';
     }
+  }
+
+  abrirChat() {
+    this.chatModal.open();
+  }
+
+  downloadPDF(): void {
+    this.pdfService.generatePdf(this.actualDetail);
   }
 
   public get isJustificationEmpty() : boolean {

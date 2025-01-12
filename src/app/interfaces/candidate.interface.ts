@@ -48,7 +48,9 @@ export interface CandidateResult {
 
 // Interfaz principal que usará el servicio
 export interface SearchResponse {
-  prompt: string;
+  prompt?: string;
   result: CandidateResult[];
-  searched_skills: string[];
+  searched_skills?: string[];
+  status?: number;
+  msg?: string;
 }

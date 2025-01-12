@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { SearchResponse } from '../interfaces/candidate.interface';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { AIPayload, AIResponse } from '../interfaces/ai.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -18,5 +19,9 @@ export class CandidateService {
 
     justifyCandidate(candidateData: any): Observable<{ msg: string }> {
         return this.http.post<{ msg: string }>(`${this.baseUrl}/justify_candidate`, candidateData);
+    }
+
+    pdfEnrichmentChat(payload: AIPayload): Observable<AIResponse> {
+      return this.http.post<AIResponse>(`${this.baseUrl}/enrichment-chat`, payload);
     }
 }

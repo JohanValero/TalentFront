@@ -1,0 +1,65 @@
+<!-- Modal backdrop -->
+<div class="modal-backdrop" *ngIf="isOpen" (click)="closeOnBackdrop($event)">
+  <!-- Modal container -->
+  <div class="modal-content">
+    <!-- Modal header -->
+    <div class="modal-header">
+      <h2>Enriquecer PDF</h2>
+      <div class="header-actions">
+        <!-- Botón de descarga PDF -->
+        <button mat-icon-button
+                *ngIf="isDownloadable"
+                (click)="downloadEnrichedPDF()"
+                matTooltip="Descargar PDF"
+                color="primary">
+          <mat-icon>file_download</mat-icon>
+        </button>
+        <button mat-icon-button (click)="close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat content -->
+    <div class="chat-container">
+      <div class="messages-container" #scrollContainer>
+        <div *ngFor="let message of messages"
+            [class]="message.isUser ? 'message user-message' : 'message ai-message'">
+          <div class="message-bubble">
+            <div class="message-content">
+              <mat-icon class="avatar-icon">
+                {{message.isUser ? 'person' : 'smart_toy'}}
+              </mat-icon>
+              <div class="message-text">{{ message.content }}</div>
+            </div>
+            <div class="message-timestamp">
+              {{ message.timestamp | date:'shortTime' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading spinner -->
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+
+      <!-- Input area -->
+      <div class="input-container">
+        <mat-form-field appearance="outline" class="message-input">
+          <mat-label>Escribe tu mensaje</mat-label>
+          <input matInput
+                 [(ngModel)]="currentMessage"
+                 (keyup.enter)="sendMessage()"
+                 [disabled]="isLoading">
+          <button mat-icon-button matSuffix
+                  (click)="sendMessage()"
+                  [disabled]="!currentMessage.trim() || isLoading"
+                  color="primary">
+            <mat-icon>send</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>
