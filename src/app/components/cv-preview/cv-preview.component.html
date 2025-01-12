@@ -1,0 +1,49 @@
+<div class="cv-preview-wrapper">
+    <div class="cv-container">
+        <header class="cv-header">
+            <h1>{{json_data.nombre}}</h1>
+            <p class="location">{{json_data.ubicacion}}</p>
+        </header>
+
+        <section class="profile-section">
+            <p>{{json_data.perfil}}</p>
+        </section>
+
+        <section class="contact-section">
+            <h2>CONTACTO</h2>
+            <div class="contact-details">
+                <p><strong>Email:</strong> {{json_data.email}}</p>
+                <p><strong>Teléfono:</strong> {{json_data.telefono}}</p>
+            </div>
+        </section>
+
+        <section class="education-section">
+            <h2>EDUCACIÓN</h2>
+            <div *ngFor="let edu of json_data.educacion">
+                <h3>{{edu.titulo}}</h3>
+                <p>{{edu.universidad}}</p>
+                <p class="years">{{edu.annos}}</p>
+            </div>
+        </section>
+
+        <section class="experience-section">
+            <h2>EXPERIENCIA</h2>
+            <div *ngFor="let exp of json_data.experiencia">
+                <div class="experience-item">
+                    <h3><strong>{{exp.cargo}}</strong> - {{exp.empresa}}</h3>
+                    <p class="years">{{exp.annos}}</p>
+                    <p class="description">{{exp.descripcion}}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="skills-section">
+            <h2>HABILIDADES</h2>
+            <ul>
+                <li *ngFor="let skill of json_data.skills">
+                    {{skill.skill_name}}
+                </li>
+            </ul>
+        </section>
+    </div>
+</div>

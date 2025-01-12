@@ -133,7 +133,7 @@ export class SearchComponent {
   }
 
   downloadPDF(): void {
-    this.pdfService.generatePdf(this.actualDetail);
+    this.pdfService.generatePdf(this.actualDetail.json_data);
   }
 
   public get isJustificationEmpty() : boolean {

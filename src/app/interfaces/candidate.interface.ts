@@ -10,13 +10,13 @@ export interface Skill {
 }
 
 export interface Education {
-  años: string;
+  annos: string;
   titulo: string;
   universidad: string;
 }
 
 export interface Experience {
-  años: string;
+  annos: string;
   cargo: string;
   descripcion: string;
   empresa: string;

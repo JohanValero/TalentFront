@@ -15,7 +15,7 @@
   background: white;
   border-radius: 8px;
   width: 90%;
-  max-width: 600px;
+  max-width: 1000px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -50,7 +50,7 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 600px;
+  width: 100%;
 }
 
 .messages-container {
@@ -125,4 +125,14 @@
 
 ::ng-deep .message-input .mat-mdc-form-field-subscript-wrapper {
   display: none;
+}
+
+.chat-and-preview {
+  display: flex;
+  width: 100%;
+}
+
+.chat-and-preview > * {  /* Selecciona los hijos directos */
+  flex: 1;    /* Hace que cada hijo ocupe la misma proporción de espacio */
+  width: 50%; /* Asegura que cada componente tome exactamente la mitad */
 }

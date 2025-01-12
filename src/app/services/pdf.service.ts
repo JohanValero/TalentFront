@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { jsPDF } from 'jspdf';
+import { CandidateData } from '../interfaces/candidate.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class PdfService {
 
   constructor() { }
 
-  generatePdf(data: any): void {
+  generatePdf(json_data: CandidateData): void {
     const doc = new jsPDF();
     const pageHeight = doc.internal.pageSize.height;
     const pageWidth = doc.internal.pageSize.width;
@@ -33,16 +34,16 @@ export class PdfService {
 
     // Nombre
     doc.setFontSize(18);
-    y = addText(`Nombre: ${data.json_data.nombre}`, margin, y, pageWidth - margin * 2, lineHeight);
+    y = addText(`Nombre: ${json_data.nombre}`, margin, y, pageWidth - margin * 2, lineHeight);
 
     // Ubicación
     doc.setFontSize(12);
-    y = addText(`${data.json_data.ubicacion}`, margin, y, pageWidth - margin * 2, lineHeight);
+    y = addText(`${json_data.ubicacion}`, margin, y, pageWidth - margin * 2, lineHeight);
     // Email
     doc.setFontSize(12);
-    y = addText(`Email: ${data.json_data.email}`, margin, y, pageWidth - margin * 2, lineHeight);
+    y = addText(`Email: ${json_data.email}`, margin, y, pageWidth - margin * 2, lineHeight);
     // Teléfono
-    y = addText(`Teléfono: ${data.json_data.telefono}`, margin, y, pageWidth - margin * 2, lineHeight);
+    y = addText(`Teléfono: ${json_data.telefono}`, margin, y, pageWidth - margin * 2, lineHeight);
 
     y += 5;
 
@@ -50,7 +51,7 @@ export class PdfService {
     doc.setFontSize(14);
     y = addText(`Perfil:`, margin, y, pageWidth - margin * 2, lineHeight);
     doc.setFontSize(12);
-    y = addText(`${data.json_data.perfil}`, margin + 5, y, pageWidth - margin * 2, lineHeight);
+    y = addText(`${json_data.perfil}`, margin + 5, y, pageWidth - margin * 2, lineHeight);
 
     // Espaciado adicional antes de la siguiente sección
     y += 5;
@@ -58,7 +59,7 @@ export class PdfService {
     // Educación
     doc.setFontSize(14);
     y = addText('Educación:', margin, y, pageWidth - margin * 2, lineHeight);
-    data.json_data.educacion.forEach((edu: any) => {
+    json_data.educacion.forEach((edu: any) => {
       doc.setFontSize(12);
       y = addText(`${edu.años} - ${edu.titulo} (${edu.universidad})`, margin + 5, y, pageWidth - margin * 2, lineHeight);
     });
@@ -68,7 +69,7 @@ export class PdfService {
     // Experiencia
     doc.setFontSize(14);
     y = addText('Experiencia:', margin, y, pageWidth - margin * 2, lineHeight);
-    data.json_data.experiencia.forEach((exp: any) => {
+    json_data.experiencia.forEach((exp: any) => {
       doc.setFontSize(12);
       y = addText(`-${exp.años} - ${exp.cargo} en ${exp.empresa}`, margin + 5, y, pageWidth - margin * 2, lineHeight);
       y = addText(`${exp.descripcion}`, margin + 10, y, pageWidth - margin * 2, lineHeight);
@@ -79,12 +80,12 @@ export class PdfService {
     // Conocimientos
     doc.setFontSize(14);
     y = addText('Conocimientos:', margin, y, pageWidth - margin * 2, lineHeight);
-    data.json_data.conocimientos.forEach((conocimiento: string) => {
+    json_data.conocimientos.forEach((conocimiento: string) => {
       doc.setFontSize(12);
       y = addText(`- ${conocimiento}`, margin + 5, y, pageWidth - margin * 2, lineHeight);
     });
 
     // Guardar el PDF
-    doc.save(`cv_${data.json_data.nombre}.pdf`);
+    doc.save(`cv_${json_data.nombre}.pdf`);
   }
 }

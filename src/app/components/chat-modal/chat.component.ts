@@ -11,6 +11,8 @@ import { ChatMessage, AIResponse, AIPayload } from '../../interfaces/ai.interfac
 import { CandidateService } from '../../services/candidate.service';
 import { PdfService } from '../../services/pdf.service';
 import { finalize } from 'rxjs';
+import { CvPreviewComponent } from "../cv-preview/cv-preview.component";
+import { CandidateData, CandidateResult } from '../../interfaces/candidate.interface';
 
 @Component({
   selector: 'app-chat',
@@ -22,22 +24,23 @@ import { finalize } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
-  ],
+    MatTooltipModule,
+    CvPreviewComponent
+],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
-  @Input() originalData: any;
+  @Input() originalData !: CandidateResult;
 
-  isOpen = false;
-  messages: ChatMessage[] = [];
-  currentMessage = '';
-  isLoading = false;
+  isOpen : boolean = false;
+  messages : ChatMessage[] = [];
+  currentMessage : string = '';
+  isLoading : boolean = false;
   isDownloadable = false;
-  chatHistory: string[] = [];
-  lastPdfData: any = null;
+  chatHistory : string[] = [];
+  lastPdfData : CandidateData | null = null;
 
   constructor(private candidateService: CandidateService, private pdfService: PdfService) {}
 
@@ -76,11 +79,17 @@ export class ChatComponent implements OnInit {
     const messageToSend = this.currentMessage;
     this.currentMessage = '';
     this.isLoading = true;
+    let data_to_send : CandidateResult | null = null;
+
+    if(this.lastPdfData == null)
+      data_to_send = this.originalData;
+    else
+      data_to_send = {"json_data": this.lastPdfData, "matched_skills": []};
 
     const payload: AIPayload = {
-      original_data: this.originalData,
+      original_data: data_to_send,
       user_prompt: messageToSend,
-      chat_history: this.chatHistory
+      chat_history: this.messages
     };
 
     await this.candidateService.pdfEnrichmentChat(payload)
@@ -91,7 +100,7 @@ export class ChatComponent implements OnInit {
         })
       )
       .subscribe({
-          next: (response) => {
+          next: (response : AIResponse) => {
               this.isDownloadable = response.isDownloadable;
               if (response.pdf_file) {
                 this.lastPdfData = response.pdf_file;
@@ -116,9 +125,20 @@ export class ChatComponent implements OnInit {
       });
   }
 
+  clearChatHistory(): void {
+    this.chatHistory = [];
+    this.messages = [{
+      content: '¡Hola! ¿Como desea enriquecer la hoja de vida?',
+      isUser: false,
+      timestamp: new Date()
+    }];
+    this.isDownloadable = false;
+    this.lastPdfData = null;
+  }
+
   downloadEnrichedPDF(): void {
     if (!this.lastPdfData) return;
-    this.pdfService.generatePdf(this.lastPdfData);
+    if (this.lastPdfData != null) this.pdfService.generatePdf(this.lastPdfData);
   }
 
   private scrollToBottom(): void {

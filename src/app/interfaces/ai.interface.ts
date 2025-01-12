@@ -13,5 +13,5 @@ export interface AIResponse {
 export interface AIPayload {
     original_data: any;
     user_prompt: string;
-    chat_history: string[];
+    chat_history: ChatMessage[];
   }
