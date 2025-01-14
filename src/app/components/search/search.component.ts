@@ -15,6 +15,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChatComponent } from "../chat-modal/chat.component";
 import { PdfService } from '../../services/pdf.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-search',
@@ -42,7 +43,8 @@ export class SearchComponent {
   searchTerm: string = '';
   isSearching: boolean = false;
   watchDetail: boolean = false;
-  detailJustification: string = '';
+  //detailJustification: string = '';
+  detailJustification: SafeHtml = '';
   errorMessage?: string = '';
   actualDetail: CandidateResult = {json_data:{
     _id: '',
@@ -61,7 +63,10 @@ export class SearchComponent {
   };
   result_of_candidates: SearchResponse | null = null;
 
-  constructor(private candidateService: CandidateService, private pdfService: PdfService) { }
+  constructor(private candidateService: CandidateService, 
+    private pdfService: PdfService,
+    private sanitizer: DomSanitizer
+  ) { }
 
   onSearch(): void {
     if (!this.searchTerm?.trim()) return;
@@ -109,7 +114,9 @@ export class SearchComponent {
         matched_skills: candidate.matched_skills
       }).subscribe({
         next: (response) => {
-          this.detailJustification = response.msg;
+          //this.detailJustification = response.msg;
+          // Sanitizar la respuesta para usarla como HTML seguro
+        this.detailJustification = this.sanitizer.bypassSecurityTrustHtml(response.msg);
         },
         error: (error) => {
           console.error(`Error obteniendo justificación para ${candidate.json_data?.nombre}:`, error);
@@ -136,8 +143,10 @@ export class SearchComponent {
     this.pdfService.generatePdf(this.actualDetail.json_data);
   }
 
-  public get isJustificationEmpty() : boolean {
-    return this.detailJustification.trim().length === 0
+  public get isJustificationEmpty(): boolean {
+    // Convierte `detailJustification` a string temporalmente y verifica si está vacío
+    return !this.detailJustification || 
+           this.detailJustification.toString().trim().length === 0;
   }
 
 }

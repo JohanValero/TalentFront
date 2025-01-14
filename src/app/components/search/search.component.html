@@ -51,8 +51,8 @@
             <div *ngIf="watchDetail" class="justification-section">
               <strong>Talent Match AI Dice:</strong>
                 <p *ngIf="detailJustification"
-                    class="justification-text">
-                    {{detailJustification}}
+                    class="justification-text"
+                    [innerHTML]="detailJustification">
                 </p>
               <mat-progress-spinner *ngIf="isJustificationEmpty" diameter="20" mode="indeterminate"></mat-progress-spinner>
               <span class="fixed-buttons">
