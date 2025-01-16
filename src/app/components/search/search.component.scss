@@ -36,13 +36,17 @@
     flex: 1;
     overflow: auto;
     padding: 0 1rem;
+    //
+    margin-bottom: 1rem; /* Agrega un margen inferior */
 }
 
 .results-scroll {
-    height: 90%;
+    //height: 90%;
     overflow-y: auto;
     max-width: 1400px;
     margin: 0 auto;
+    //
+    height: calc(100vh - 200px); /* Ajusta según sea necesario */
 }
 
 .loading-container {

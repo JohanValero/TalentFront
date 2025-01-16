@@ -21,6 +21,8 @@
   flex-direction: column;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   animation: modalOpen 0.3s ease-out;
+  //
+  overflow: hidden;
 }
 
 @keyframes modalOpen {
@@ -50,16 +52,22 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  //width: 100%;
+  flex: 1;
+  //
+  overflow: hidden;
 }
 
 .messages-container {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 20px;
+  //padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  //
+  padding: 10px;
+  max-height: 60vh;
 }
 
 .message {
@@ -108,9 +116,12 @@
 }
 
 .input-container {
-  padding: 16px;
+  //padding: 16px;
   background-color: white;
-  border-top: 1px solid rgba(0,0,0,0.12);
+  //border-top: 1px solid rgba(0,0,0,0.12);
+  //
+  padding: 10px;
+  border-top: 1px solid #ccc;
 }
 
 .message-input {
