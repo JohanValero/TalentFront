@@ -24,3 +24,7 @@ CMD ["ng", "serve", "--host", "0.0.0.0"]
 
 # docker build -t angular-app .
 # docker run -p 4200:4200 angular-app
+
+# docker build -t talentmatch.azurecr.io/frontend/talent_match .
+# docker push talentmatch.azurecr.io/frontend/talent_match
+# docker run -p 4200:4200 talentmatch.azurecr.io/frontend/talent_match
