@@ -1,6 +1,6 @@
 // src/app/services/candidate.service.ts
 import { Injectable } from '@angular/core';
-import { SearchResponse } from '../interfaces/candidate.interface';
+import { CandidateData, SearchResponse } from '../interfaces/candidate.interface';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AIPayload, AIResponse } from '../interfaces/ai.interface';
@@ -9,8 +9,8 @@ import { AIPayload, AIResponse } from '../interfaces/ai.interface';
   providedIn: 'root'
 })
 export class CandidateService {
-    private baseUrl = 'http://127.0.0.1:5000';
-    // private baseUrl = 'https://talent-backend.orangegrass-f60c0e61.brazilsouth.azurecontainerapps.io';
+    // private baseUrl = 'http://127.0.0.1:5000';
+    private baseUrl = 'https://talent-backend.orangegrass-f60c0e61.brazilsouth.azurecontainerapps.io';
     constructor(private http: HttpClient) {}
 
     searchCandidates(term: string): Observable<SearchResponse> {
@@ -35,8 +35,8 @@ export class CandidateService {
       return this.http.post<AIResponse>(`${this.baseUrl}/update-chat`, payload);
     }
 
-    saveCV(id: string, payload: any): Observable<any> {
+    saveCV(id: string, payload: CandidateData | null): Observable<AIResponse> {
       const encodedTerm = encodeURIComponent(id);
-      return this.http.post<any>(`${this.baseUrl}/save-cv/${encodedTerm}`, payload);
+      return this.http.post<AIResponse>(`${this.baseUrl}/save-cv/${encodedTerm}`, payload);
     }
 }
