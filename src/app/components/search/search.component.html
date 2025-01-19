@@ -2,10 +2,13 @@
     <div class="search-box">
         <mat-form-field appearance="outline">
             <input matInput
-                   [(ngModel)]="searchTerm"
-                   placeholder="Buscar candidatos..."
-                   (keyup.enter)="onSearch()">
-            <button mat-icon-button matTooltip="Escriba los conceptos claves de búsqueda" matSuffix (click)="onSearch()">
+                  [(ngModel)]="searchTerm"
+                  [placeholder]="!isUpdate ? 'Buscar candidatos...': 'Buscar hoja de vida a actualizar...'"
+                  (keyup.enter)="onSearch()">
+            <button mat-icon-button
+            [matTooltip]="!isUpdate ? 'Escriba los conceptos claves de búsqueda' : 'Escriba el nombre del candidato a actualizar'"
+            matSuffix
+            (click)="onSearch()">
                 <mat-icon>search</mat-icon>
             </button>
         </mat-form-field>
@@ -14,7 +17,7 @@
     <!-- No Results Message -->
     <div *ngIf="!isSearching && result_of_candidates && result_of_candidates.result.length === 0 && searchTerm && !watchDetail"
       class="no-results">
-      No se encontraron candidatos para tu búsqueda{{errorMessage}}
+      No se encontraron candidatos para tu búsqueda{{!isUpdate ? errorMessage: ''}}
     </div>
 
     <div class="results-container" *ngIf="isSearching || (result_of_candidates && result_of_candidates.result.length > 0)">
@@ -29,7 +32,7 @@
                 <mat-card *ngFor="let candidate of result_of_candidates.result" class="candidate-card">
                     <mat-card-header>
                         <mat-card-title><strong>{{ candidate.json_data.nombre | uppercase }}</strong></mat-card-title>
-                        <button mat-icon-button color="primary" matTooltip="Ver CV" 
+                        <button mat-icon-button color="primary" matTooltip="Ver CV"
                         matTooltipPosition="above"
                                 class="view-cv-button"
                                 (click)="onViewCV(candidate)">
@@ -38,7 +41,7 @@
                     </mat-card-header>
                     <mat-card-content>
                         <p class="profile-text">{{ candidate.json_data.perfil }}</p>
-                        <ul>
+                        <ul *ngIf="!isUpdate">
                           <li *ngFor="let skill of candidate.matched_skills">
                             <strong>{{ skill.skill | uppercase }}</strong>: {{ skill.score | percent:'1.0-2' }}
                             <span [ngClass]="getColorClass(skill.score)" class="color-indicator"></span>
@@ -48,9 +51,12 @@
                 </mat-card>
             </div>
 
+            <!-- MODAL DE CHAT -->
+            <app-chat [originalData]="actualDetail" [isUpdate]="isUpdate"></app-chat>
+
             <!-- VER DETALLES -->
             <div *ngIf="watchDetail" class="justification-section">
-              <strong>Talent Match AI Dice:</strong>
+              <strong>TalentMatch AI Dice:</strong>
                 <p *ngIf="detailJustification"
                     class="justification-text"
                     [innerHTML]="detailJustification">
@@ -68,9 +74,6 @@
                 (click)="abrirChat()">
                 <mat-icon>picture_as_pdf</mat-icon>
                 </button>
-
-                <!-- MODAL DE CHAT -->
-                <app-chat [originalData]="actualDetail"></app-chat>
 
                 <button mat-icon-button color="primary" matTooltip="Descargar PDF"
                 class="back-button"

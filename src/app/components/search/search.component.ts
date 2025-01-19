@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,30 +40,18 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class SearchComponent {
   @ViewChild(ChatComponent) chatModal!: ChatComponent;
+  @Input() isUpdate: boolean = false;
+
   searchTerm: string = '';
   isSearching: boolean = false;
   watchDetail: boolean = false;
   //detailJustification: string = '';
   detailJustification: SafeHtml = '';
   errorMessage?: string = '';
-  actualDetail: CandidateResult = {json_data:{
-    _id: '',
-    conocimientos: [],
-    educacion: [],
-    email: '',
-    experiencia: [],
-    idiomas: [],
-    nombre: '',
-    perfil: '',
-    skills: [],
-    telefono: '',
-    ubicacion: ''
-  },
-  matched_skills: []
-  };
+  actualDetail !: CandidateResult;
   result_of_candidates: SearchResponse | null = null;
 
-  constructor(private candidateService: CandidateService, 
+  constructor(private candidateService: CandidateService,
     private pdfService: PdfService,
     private sanitizer: DomSanitizer
   ) { }
@@ -74,7 +62,12 @@ export class SearchComponent {
     this.isSearching = true;
     this.result_of_candidates = null;
     this.watchDetail = false;
-    this.candidateService.searchCandidates(this.searchTerm)
+
+    const selectedService$ = !this.isUpdate
+    ? this.candidateService.searchCandidates(this.searchTerm)
+    : this.candidateService.searchByName(this.searchTerm);
+
+    selectedService$
       .subscribe({
         next: (results) => {
           if(results.status === 500){
@@ -96,10 +89,13 @@ export class SearchComponent {
 
   onViewCV(candidateObj: CandidateResult): void {
     this.detailJustification = ''
-    this.getCandidateJustifications(candidateObj)
     this.actualDetail = candidateObj;
-    this.watchDetail = true;
-
+    if(!this.isUpdate){
+      this.getCandidateJustifications(candidateObj)
+      this.watchDetail = true;
+      return
+    }
+    this.abrirChat();
   }
 
   onBack(){
@@ -145,7 +141,7 @@ export class SearchComponent {
 
   public get isJustificationEmpty(): boolean {
     // Convierte `detailJustification` a string temporalmente y verifica si está vacío
-    return !this.detailJustification || 
+    return !this.detailJustification ||
            this.detailJustification.toString().trim().length === 0;
   }
 

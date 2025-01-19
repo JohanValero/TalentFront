@@ -33,6 +33,7 @@ import { CandidateData, CandidateResult } from '../../interfaces/candidate.inter
 export class ChatComponent implements OnInit {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Input() originalData !: CandidateResult;
+  @Input() isUpdate !: boolean;
 
   isOpen : boolean = false;
   messages : ChatMessage[] = [];
@@ -46,7 +47,9 @@ export class ChatComponent implements OnInit {
 
   ngOnInit() {
     this.messages = [{
-      content: '¡Hola! ¿Como desea enriquecer la hoja de vida?',
+      content: !this.isUpdate ?
+        '¡Hola! ¿Como desea enriquecer la hoja de vida?'
+        :'¡Hola! ¿Que deseas agregar o modificar de tu hoja de vida?',
       isUser: false,
       timestamp: new Date()
     }];
@@ -66,7 +69,7 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  async sendMessage() {
+  sendMessage() {
     if (!this.currentMessage.trim() || this.isLoading) return;
 
     const userMessage: ChatMessage = {
@@ -92,7 +95,11 @@ export class ChatComponent implements OnInit {
       chat_history: this.messages
     };
 
-    await this.candidateService.pdfEnrichmentChat(payload)
+    const selectedService$ = this.isUpdate
+    ? this.candidateService.pdfUpdateChat(payload)
+    : this.candidateService.pdfEnrichmentChat(payload);
+
+    selectedService$
       .pipe(
         finalize(() => {
           this.isLoading = false;
@@ -127,11 +134,7 @@ export class ChatComponent implements OnInit {
 
   clearChatHistory(): void {
     this.chatHistory = [];
-    this.messages = [{
-      content: '¡Hola! ¿Como desea enriquecer la hoja de vida?',
-      isUser: false,
-      timestamp: new Date()
-    }];
+    this.ngOnInit();
     this.isDownloadable = false;
     this.lastPdfData = null;
   }
@@ -139,6 +142,38 @@ export class ChatComponent implements OnInit {
   downloadEnrichedPDF(): void {
     if (!this.lastPdfData) return;
     if (this.lastPdfData != null) this.pdfService.generatePdf(this.lastPdfData);
+  }
+
+  onSave(){
+    const id = this.originalData.json_data._id;
+    this.isLoading = true;
+    this.candidateService.saveCV(id, this.lastPdfData)
+    .pipe(
+      finalize(() => {
+        this.isLoading = false;
+        this.scrollToBottom();
+      })
+    )
+    .subscribe({
+        next: (response: any) => {
+          console.log("RESPONSE:::", response);
+        },
+        error: (error) => {
+          console.error('Error al enviar mensaje:', error);
+          this.messages.push({
+            content: 'Lo siento, hubo un error al guardar tu hoja de vida.',
+            isUser: false,
+            timestamp: new Date()
+          });
+        },
+        complete: () => {
+          this.messages.push({
+            content: "Se ha actualizado correctamente tu hoja de vida",
+            isUser: false,
+            timestamp: new Date()
+          });
+        }
+    });
   }
 
   private scrollToBottom(): void {

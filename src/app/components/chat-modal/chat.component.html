@@ -2,11 +2,18 @@
 <div class="modal-backdrop" *ngIf="isOpen" (click)="closeOnBackdrop($event)">
   <!-- Modal container -->
   <div class="modal-content">
-    
+
       <!-- Modal header -->
       <div class="modal-header">
-        <h2>Enriquecer PDF</h2>
+        <h2>{{ isUpdate ? 'Editar PDF' : 'Enriquecer PDF' }}</h2>
         <div class="header-actions">
+          <button mat-icon-button
+                  *ngIf="isDownloadable && isUpdate"
+                  (click)="onSave()"
+                  matTooltip="Guardar HV"
+                  color="primary">
+            <mat-icon>save</mat-icon>
+          </button>
           <!-- Botón de descarga PDF -->
           <button mat-icon-button
                   *ngIf="isDownloadable"
