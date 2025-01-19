@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -34,6 +34,7 @@ export class ChatComponent implements OnInit {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @Input() originalData !: CandidateResult;
   @Input() isUpdate !: boolean;
+  @Output() cvUpdated = new EventEmitter<CandidateData>();
 
   isOpen : boolean = false;
   messages : ChatMessage[] = [];
@@ -57,21 +58,10 @@ export class ChatComponent implements OnInit {
 
   open() {
     this.isOpen = true;
-    this.lastPdfData = null;
-    this.chatHistory = [];
-    this.currentMessage = "";
-    this.isLoading = false;
-    this.isDownloadable = false;
-    this.messages = [{
-      content: !this.isUpdate ?
-        '¡Hola! ¿Como desea enriquecer la hoja de vida?'
-        :'¡Hola! ¿Que deseas agregar o modificar de tu hoja de vida?',
-      isUser: false,
-      timestamp: new Date()
-    }];
   }
 
   close() {
+    this.clearChatHistory()
     this.isOpen = false;
   }
 
@@ -152,8 +142,8 @@ export class ChatComponent implements OnInit {
   }
 
   downloadEnrichedPDF(): void {
-    if (!this.lastPdfData) return;
-    if (this.lastPdfData != null) this.pdfService.generatePdf(this.lastPdfData);
+    const dataToGenerate = this.lastPdfData || this.originalData.json_data;
+    this.pdfService.generatePdf(dataToGenerate);
   }
 
   onSave(){
@@ -168,19 +158,23 @@ export class ChatComponent implements OnInit {
     )
     .subscribe({
         next: (response: any) => {
-          console.log("RESPONSE:::", response);
+          console.log("RES:::", response);
+          this.messages.push({
+            content: "Se ha actualizado correctamente tu hoja de vida",
+            isUser: false,
+            timestamp: new Date()
+          });
+
+          if (this.lastPdfData) {
+            this.lastPdfData._id = this.originalData.json_data._id
+            this.originalData.json_data = this.lastPdfData
+            this.cvUpdated.emit(this.lastPdfData);
+          }
         },
         error: (error) => {
           console.error('Error al enviar mensaje:', error);
           this.messages.push({
             content: 'Lo siento, hubo un error al guardar tu hoja de vida.',
-            isUser: false,
-            timestamp: new Date()
-          });
-        },
-        complete: () => {
-          this.messages.push({
-            content: "Se ha actualizado correctamente tu hoja de vida",
             isUser: false,
             timestamp: new Date()
           });

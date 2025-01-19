@@ -9,7 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { CandidateService } from '../../services/candidate.service';
-import { CandidateResult, SearchResponse } from '../../interfaces/candidate.interface';
+import { CandidateData, CandidateResult, SearchResponse } from '../../interfaces/candidate.interface';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -45,7 +45,6 @@ export class SearchComponent {
   searchTerm: string = '';
   isSearching: boolean = false;
   watchDetail: boolean = false;
-  //detailJustification: string = '';
   detailJustification: SafeHtml = '';
   errorMessage?: string = '';
   actualDetail !: CandidateResult;
@@ -87,6 +86,17 @@ export class SearchComponent {
       });
   }
 
+  onCvUpdated(updatedData: CandidateData) {
+    if (this.result_of_candidates) {
+      const index = this.result_of_candidates.result.findIndex(
+        candidate => candidate.json_data._id === updatedData._id
+      );
+      if (index !== -1) {
+        this.result_of_candidates.result[index].json_data = updatedData;
+      }
+    }
+  }
+
   onViewCV(candidateObj: CandidateResult): void {
     this.detailJustification = ''
     this.actualDetail = candidateObj;
@@ -110,9 +120,7 @@ export class SearchComponent {
         matched_skills: candidate.matched_skills
       }).subscribe({
         next: (response) => {
-          //this.detailJustification = response.msg;
-          // Sanitizar la respuesta para usarla como HTML seguro
-        this.detailJustification = this.sanitizer.bypassSecurityTrustHtml(response.msg);
+          this.detailJustification = this.sanitizer.bypassSecurityTrustHtml(response.msg);
         },
         error: (error) => {
           console.error(`Error obteniendo justificación para ${candidate.json_data?.nombre}:`, error);
@@ -140,9 +148,8 @@ export class SearchComponent {
   }
 
   public get isJustificationEmpty(): boolean {
-    // Convierte `detailJustification` a string temporalmente y verifica si está vacío
     return !this.detailJustification ||
-           this.detailJustification.toString().trim().length === 0;
+          this.detailJustification.toString().trim().length === 0;
   }
 
 }

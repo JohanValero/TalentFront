@@ -61,7 +61,7 @@ export class PdfService {
     y = addText('Educación:', margin, y, pageWidth - margin * 2, lineHeight);
     json_data.educacion.forEach((edu: any) => {
       doc.setFontSize(12);
-      y = addText(`${edu.años} - ${edu.titulo} (${edu.universidad})`, margin + 5, y, pageWidth - margin * 2, lineHeight);
+      y = addText(`- ${edu.titulo} (${edu.universidad})`, margin + 5, y, pageWidth - margin * 2, lineHeight);
     });
 
     y += 5;
@@ -71,7 +71,7 @@ export class PdfService {
     y = addText('Experiencia:', margin, y, pageWidth - margin * 2, lineHeight);
     json_data.experiencia.forEach((exp: any) => {
       doc.setFontSize(12);
-      y = addText(`-${exp.años} - ${exp.cargo} en ${exp.empresa}`, margin + 5, y, pageWidth - margin * 2, lineHeight);
+      y = addText(`- ${exp.cargo} en ${exp.empresa}`, margin + 5, y, pageWidth - margin * 2, lineHeight);
       y = addText(`${exp.descripcion}`, margin + 10, y, pageWidth - margin * 2, lineHeight);
     });
 
