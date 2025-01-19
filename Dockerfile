@@ -17,6 +17,7 @@ RUN npm install -g @angular/cli
 COPY . .
 
 # Puerto en el que corre la aplicación
+ENV HOST=0.0.0.0
 EXPOSE 4200
 
 # Comando para iniciar la aplicación
