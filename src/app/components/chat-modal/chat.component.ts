@@ -57,6 +57,18 @@ export class ChatComponent implements OnInit {
 
   open() {
     this.isOpen = true;
+    this.lastPdfData = null;
+    this.chatHistory = [];
+    this.currentMessage = "";
+    this.isLoading = false;
+    this.isDownloadable = false;
+    this.messages = [{
+      content: !this.isUpdate ?
+        '¡Hola! ¿Como desea enriquecer la hoja de vida?'
+        :'¡Hola! ¿Que deseas agregar o modificar de tu hoja de vida?',
+      isUser: false,
+      timestamp: new Date()
+    }];
   }
 
   close() {
