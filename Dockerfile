@@ -1,27 +1,27 @@
-# Usar node como imagen base
-FROM node:18
+# Etapa de construcción
+FROM node:18 as builder
 
-# Directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copiar package.json y package-lock.json
 COPY package*.json ./
-
-# Instalar dependencias
 RUN npm install
 
-# Instalar Angular CLI globalmente
-RUN npm install -g @angular/cli
-
-# Copiar el resto del código
 COPY . .
+RUN npm run build --prod
 
-# Puerto en el que corre la aplicación
-ENV HOST=0.0.0.0
-EXPOSE 4200
+# Etapa de producción
+FROM nginx:alpine
 
-# Comando para iniciar la aplicación
-CMD ["ng", "serve", "--host", "0.0.0.0"]
+# Copiar la configuración de nginx personalizada si es necesaria
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copiar los archivos construidos desde la etapa de builder
+COPY --from=builder /app/dist/* /usr/share/nginx/html/
+
+# Exponer puerto 80
+EXPOSE 80
+
+# nginx arranca automáticamente, no necesita CMD
 
 # docker build -t angular-app .
 # docker run -p 4200:4200 angular-app
